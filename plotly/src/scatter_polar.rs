@@ -171,8 +171,7 @@ where
         Box::new(Self {
             theta: Some(theta),
             r: Some(r),
-            r#type: PlotType::ScatterPolar,
-            ..Default::default()
+            ..Self::default()
         })
     }
 
@@ -181,8 +180,7 @@ where
         Box::new(Self {
             theta: Some(theta.to_vec()),
             r: Some(r.to_vec()),
-            r#type: PlotType::ScatterPolar,
-            ..Default::default()
+            ..Self::default()
         })
     }
 
@@ -274,16 +272,16 @@ where
         Box::new(self)
     }
 
-    /// Determines whether or not an item corresponding to this trace is shown in the legend.
-    pub fn show_legend(mut self, show_legend: bool) -> Box<Self> {
-        self.show_legend = Some(show_legend);
-        Box::new(self)
-    }
-
     /// Sets the legend group for this trace. Traces part of the same legend group hide/show at the
     /// same time when toggling legend items.
     pub fn legend_group(mut self, legend_group: &str) -> Box<Self> {
         self.legend_group = Some(legend_group.to_owned());
+        Box::new(self)
+    }
+
+    /// Determines whether or not an item corresponding to this trace is shown in the legend.
+    pub fn show_legend(mut self, show_legend: bool) -> Box<Self> {
+        self.show_legend = Some(show_legend);
         Box::new(self)
     }
 
@@ -310,37 +308,42 @@ where
         Box::new(self)
     }
 
-    /// Alternate to `x`. Builds a linear space of x coordinates. Use with `dx` where `x0` is the
-    /// starting coordinate and `dx` the step.
-    pub fn theta0<C: NumOrString>(mut self, theta0: C) -> Box<Self> {
-        self.theta0 = Some(theta0.to_num_or_string());
+    /// Sets the radial coordinates
+    pub fn r<C: NumOrString>(mut self, r: Vec<R>) -> Box<Self> {
+        self.r = Some(r);
         Box::new(self)
     }
 
-    /// Sets the x coordinate step. See `x0` for more info.
-    pub fn dtheta(mut self, dtheta: f64) -> Box<Self> {
-        self.dtheta = Some(dtheta);
-        Box::new(self)
-    }
-
-    /// Alternate to `y`. Builds a linear space of y coordinates. Use with `dy` where `y0` is the
-    /// starting coordinate and `dy` the step.
+    /// Alternate to `r`. Builds a linear space of r coordinates. Use with `dr` where `r0`
+    /// is the starting coordinate and `dr` the step.
     pub fn r0<C: NumOrString>(mut self, r0: C) -> Box<Self> {
         self.r0 = Some(r0.to_num_or_string());
         Box::new(self)
     }
 
-    /// Sets the y coordinate step. See `y0` for more info.
+    /// Sets the r coordinate step.
     pub fn dr(mut self, dr: f64) -> Box<Self> {
         self.dr = Some(dr);
         Box::new(self)
     }
 
-    /// Sets a reference between this trace's data coordinates and a polar subplot. If "polar"
-    /// (the default value), the data refer to `layout.polar`. If "polar2", the data refer to
-    /// `layout.polar2`, and so on.
-    pub fn subplot(mut self, subplot: &str) -> Box<Self> {
-        self.subplot = Some(subplot.to_owned());
+    /// Sets the angular coordinates
+    pub fn theta<C: NumOrString>(mut self, theta: Vec<Theta>) -> Box<Self> {
+        self.theta = Some(theta);
+        Box::new(self)
+    }
+
+    /// Alternate to `theta`. Builds a linear space of theta coordinates. Use with `dtheta`
+    /// where `theta0` is the starting coordinate and `dtheta` the step.
+    pub fn theta0<C: NumOrString>(mut self, theta0: C) -> Box<Self> {
+        self.theta0 = Some(theta0.to_num_or_string());
+        Box::new(self)
+    }
+
+    /// Sets the theta coordinate step. By default, the `dtheta` step equals the subplot's
+    /// period divided by the length of the `r` coordinates.
+    pub fn dtheta(mut self, dtheta: f64) -> Box<Self> {
+        self.dtheta = Some(dtheta);
         Box::new(self)
     }
 
@@ -350,6 +353,14 @@ where
     /// `hover_text` is not set, these elements will be seen in the hover labels.
     pub fn text(mut self, text: &str) -> Box<Self> {
         self.text = Some(Dim::Scalar(text.to_owned()));
+        Box::new(self)
+    }
+
+    /// Sets a reference between this trace's data coordinates and a polar subplot. If "polar"
+    /// (the default value), the data refer to `layout.polar`. If "polar2", the data refer to
+    /// `layout.polar2`, and so on.
+    pub fn subplot(mut self, subplot: &str) -> Box<Self> {
+        self.subplot = Some(subplot.to_owned());
         Box::new(self)
     }
 
